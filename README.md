@@ -1,9 +1,11 @@
 ## App Store Connect API
 
 ### Upload AuthKey
+
 - Upload P8 file into `/AuthKey`  **(NOT TO EDIT THE FILE NAME)**
 
 ### Get Token
+
 - URL: /v1/GetToken
 - Method: GET
 - Parameter:
@@ -30,7 +32,9 @@
     "token":"xxx.xxx.xxx"
 }
 ```
+
 ### 注册设备
+
 - URL: /v1/RegisterNewDevice
 - Method: GET
 - Parameter:
@@ -56,18 +60,18 @@
 {
     "data":{
         "type":"devices",
-        "id":"xxx",
+        "id":"***",
         "attributes":{
-            "addedDate":"xxxx-xx-xxTxx:xx:xx.xxxxxxx",
-            "name":"xxx",
+            "addedDate":"***x-xx-xxTxx:xx:xx.******x",
+            "name":"***",
             "deviceClass":"IPHONE",
             "model":"iPhone X",
-            "udid":"xxx",
+            "udid":"***",
             "platform":"IOS",
             "status":"ENABLED"
         },
         "links":{
-            "self":"https://api.appstoreconnect.apple.com/v1/devices/xxx"
+            "self":"https://api.appstoreconnect.apple.com/v1/devices/***"
         }
     },
     "links":{
@@ -77,6 +81,7 @@
 ```
 
 ### 列出设备
+
 - URL: /v1/ListDevices
 - Method: GET
 - Parameter:
@@ -101,12 +106,12 @@
     "data":[
         {
             "type":"devices",
-            "id":"xxxxxx",
+            "id":"******",
             "attributes":{
-                "udid":"xxxxxx"
+                "udid":"******"
             },
             "links":{
-                "self":"https://api.appstoreconnect.apple.com/v1/devices/xxxxxx"
+                "self":"https://api.appstoreconnect.apple.com/v1/devices/******"
             }
         }
     ],
@@ -123,6 +128,7 @@
 ```
 
 ### 注册BundleID
+
 - URL: /v1/RegisterNewBundleID
 - Method: GET
 - Parameter:
@@ -206,6 +212,7 @@
 ```
 
 ### 列出BundleID
+
 - URL: /v1/ListBundleIDs
 - Method: GET
 - Parameter:
@@ -252,6 +259,7 @@
 ```
 
 ### 列出Apps
+
 - URL: /v1/ListApps
 - Method: GET
 - Parameter:
@@ -406,6 +414,7 @@
 ```
 
 ### 列出证书
+
 - URL: /v1/ListCertifications
 - Method: GET
 - Parameter:
