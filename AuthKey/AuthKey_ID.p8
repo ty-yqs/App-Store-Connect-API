@@ -1,0 +1,3 @@
+-----BEGIN PRIVATE KEY-----
+CONTENT
+-----END PRIVATE KEY-----
