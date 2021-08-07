@@ -28,8 +28,8 @@
 ```json
 {
     "status":"200",
-    "expiration":xxx,
-    "token":"xxx.xxx.xxx"
+    "expiration":xxxx,
+    "token":"xxxx.xxxx.xxxx"
 }
 ```
 
@@ -397,7 +397,7 @@
                 }
             },
             "links":{
-                "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx"
+                "self":"https://api.appstoreconnect.apple.com/v1/apps/xxxx"
             }
         }
     ],
@@ -441,10 +441,10 @@
             "type":"certificates",
             "id":"xxx",
             "attributes":{
-                "serialNumber":"xxx",
-                "certificateContent":"xxx",
+                "serialNumber":"xxxx",
+                "certificateContent":"xxxx",
                 "displayName":"xxx",
-                "name":"Apple Development: xxx",
+                "name":"Apple Development: xxxx",
                 "csrContent":null,
                 "platform":null,
                 "expirationDate":"xxxx-xx-xxTxx:xx:xx.xxx+xxxx",
@@ -453,8 +453,8 @@
             "relationships":{
                 "passTypeId":{
                     "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/certificates/xxx/relationships/passTypeId",
-                        "related":"https://api.appstoreconnect.apple.com/v1/certificates/xxx/passTypeId"
+                        "self":"https://api.appstoreconnect.apple.com/v1/certificates/xxxx/relationships/passTypeId",
+                        "related":"https://api.appstoreconnect.apple.com/v1/certificates/xxxx/passTypeId"
                     }
                 }
             },
