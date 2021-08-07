@@ -28,8 +28,8 @@
 ```json
 {
     "status":"200",
-    "expiration":xxx,
-    "token":"xxx.xxx.xxx"
+    "expiration":***,
+    "token":"***.***.***"
 }
 ```
 
