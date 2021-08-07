@@ -1,13 +1,5 @@
 ## App Store Connect API
 ### 上传AuthKey文件
-- 登录 [App Store Conect](https://appstoreconnect.apple.com)
-- 进入 [用户和访问](https://appstoreconnect.apple.com/access/users)
-- 点击菜单栏密钥，选择密钥类型为`App Store Connect API`
-- 点击`+`
-- 名称随便填写，访问一栏选取`开发者`
-- 确认无误后点击创建按钮
-- 点击刚创建的证书对应的最右边`下载API密钥`
-- 弹出的窗口中点击`下载`，妥善保管下载的文件
 - 上传P8文件到AuthKey文件夹(不要修改文件名)
 
 ### 获取Token
