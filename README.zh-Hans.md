@@ -1,4 +1,4 @@
-## App Store Connect API 使用说明
+## App Store Connect API
 ### 上传AuthKey文件
 - 登录 [App Store Conect](https://appstoreconnect.apple.com)
 - 进入 [用户和访问](https://appstoreconnect.apple.com/access/users)
