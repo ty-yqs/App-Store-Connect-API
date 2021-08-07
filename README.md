@@ -167,7 +167,7 @@
                 "meta":{
                     "paging":{
                         "total":0,
-                        "limit":xxx
+                        "limit":1
                     }
                 },
                 "data":[
@@ -189,7 +189,7 @@
                 "meta":{
                     "paging":{
                         "total":0,
-                        "limit":xxx
+                        "limit":1
                     }
                 },
                 "data":[
