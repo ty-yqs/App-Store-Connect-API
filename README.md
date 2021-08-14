@@ -4,7 +4,7 @@
 
 - Upload P8 file into `/AuthKey`  **(NOT TO EDIT THE FILE NAME)**
 
-### Get Token
+### GetToken
 
 - URL: /v1/GetToken
 - Method: GET
@@ -33,7 +33,7 @@
 }
 ```
 
-### 注册设备
+### RegisterNewDevice
 
 - URL: /v1/RegisterNewDevice
 - Method: GET
@@ -80,7 +80,7 @@
 }
 ```
 
-### 列出设备
+### ListDevices
 
 - URL: /v1/ListDevices
 - Method: GET
@@ -127,7 +127,7 @@
 }
 ```
 
-### 注册BundleID
+### RegisterNewBundleID
 
 - URL: /v1/RegisterNewBundleID
 - Method: GET
@@ -211,7 +211,7 @@
 }
 ```
 
-### 列出BundleID
+### ListBundleIDs
 
 - URL: /v1/ListBundleIDs
 - Method: GET
@@ -258,7 +258,7 @@
 }
 ```
 
-### 列出Apps
+### ListApps
 
 - URL: /v1/ListApps
 - Method: GET
@@ -413,7 +413,7 @@
 }
 ```
 
-### 列出证书
+### ListCertifications
 
 - URL: /v1/ListCertifications
 - Method: GET
