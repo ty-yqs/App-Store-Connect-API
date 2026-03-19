@@ -1,466 +1,172 @@
-## App Store Connect API
-### 上传AuthKey文件
-- 上传P8文件到AuthKey文件夹(不要修改文件名)
+# App Store Connect API Gateway
 
-### 获取Token
-- 请求地址: /v1/GetToken
-- 请求方式: GET
-- 请求参数:
+一个基于 PHP 的 App Store Connect API REST 网关。
 
-| 参数 | 值        |
-|------|-----------|
-| iss  | Issuer ID |
-| kid  | 密钥 ID   |
+## 当前状态
 
-- 返回格式: application/json
-- 返回码:
+- 接口风格: 仅 REST
+- 鉴权模式: 受保护接口仅支持 Authorization Bearer
 
-| 返回码 | 类型           | 解释                                     | 格式             |
-|--------|----------------|------------------------------------------|------------------|
-| 201    | TokenResponse | Created.                                 | application/json |
-| 409    | ErrorResponse  | The provided resource data is not valid. | application/json |
+## 已实现模块
 
-- 返回样例:
+- Token: 生成 App Store Connect JWT
+- Apps: 列表、详情、App Store 版本
+- Devices: 列表、创建、详情、更新、删除
+- Bundle IDs: 列表、创建、详情、更新、删除
+- Certificates: 列表、详情、删除
+- Profiles: 列表、创建、详情、删除
+- TestFlight: beta groups、beta testers、builds
+- App 版本本地化: 列表、创建、详情、更新
 
+## 项目结构
+
+```text
+app/
+  Controllers/
+  Http/
+  Services/
+  Support/
+v1/
+  index.php
+  routes.php
+openapi.yaml
 ```
+
+## 运行要求
+
+- PHP 8.1+
+- PHP 扩展: curl、openssl、json
+- Composer (推荐，用于测试)
+
+## 快速开始
+
+1. 复制环境变量模板:
+
+```bash
+cp .env.example .env
+```
+
+2. 放置密钥文件到 AuthKey:
+
+```text
+AuthKey/AuthKey_<kid>.p8
+```
+
+3. 启动本地服务:
+
+```bash
+php -S 127.0.0.1:8080 v1/index.php
+```
+
+4. 生成 JWT:
+
+```bash
+curl -X POST http://127.0.0.1:8080/v1/token \
+  -H 'Content-Type: application/json' \
+  -d '{"iss":"<issuer-id>","kid":"<key-id>"}'
+```
+
+5. 调用受保护接口:
+
+```bash
+curl http://127.0.0.1:8080/v1/apps \
+  -H 'Authorization: Bearer <jwt-token>'
+```
+
+## 接口列表
+
+### 公共接口
+
+- GET /v1/health
+- POST /v1/token
+
+### 受保护接口
+
+- GET /v1/apps
+- GET /v1/apps/{id}
+- GET /v1/apps/{id}/appStoreVersions
+- GET /v1/devices
+- POST /v1/devices
+- GET /v1/devices/{id}
+- PATCH /v1/devices/{id}
+- DELETE /v1/devices/{id}
+- GET /v1/bundleIds
+- POST /v1/bundleIds
+- GET /v1/bundleIds/{id}
+- PATCH /v1/bundleIds/{id}
+- DELETE /v1/bundleIds/{id}
+- GET /v1/certificates
+- GET /v1/certificates/{id}
+- DELETE /v1/certificates/{id}
+- GET /v1/profiles
+- POST /v1/profiles
+- GET /v1/profiles/{id}
+- DELETE /v1/profiles/{id}
+- GET /v1/betaGroups
+- GET /v1/betaTesters
+- GET /v1/builds
+- GET /v1/appStoreVersions/{id}/appStoreVersionLocalizations
+- POST /v1/appStoreVersionLocalizations
+- GET /v1/appStoreVersionLocalizations/{id}
+- PATCH /v1/appStoreVersionLocalizations/{id}
+
+## 统一响应格式
+
+成功:
+
+```json
 {
-    "status":"200",
-    "expiration":xxx,
-    "token":"xxx.xxx.xxx"
-}
-```
-### 注册设备
-- 请求地址: /v1/RegisterNewDevice
-- 请求方式: GET
-- 请求参数:
-
-| 参数  | 值             |
-|-------|----------------|
-| token | token          |
-| udid  | 待注册设备UDID |
-
-- 返回格式: application/json
-- 返回码:
-
-| 返回码 | 类型           | 解释                                     | 格式             |
-|--------|----------------|------------------------------------------|------------------|
-| 201    | DeviceResponse | Created.                                 | application/json |
-| 400    | ErrorResponse  | An error occurred with your request.     | application/json |
-| 403    | ErrorResponse  | Request not authorized.                  | application/json |
-| 409    | ErrorResponse  | The provided resource data is not valid. | application/json |
-
-- 返回样例:
-
-```
-{
-    "data":{
-        "type":"devices",
-        "id":"xxx",
-        "attributes":{
-            "addedDate":"xxxx-xx-xxTxx:xx:xx.xxxxxxx",
-            "name":"xxx",
-            "deviceClass":"IPHONE",
-            "model":"iPhone X",
-            "udid":"xxx",
-            "platform":"IOS",
-            "status":"ENABLED"
-        },
-        "links":{
-            "self":"https://api.appstoreconnect.apple.com/v1/devices/xxx"
-        }
-    },
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/devices"
-    }
-}
-```
-
-### 列出设备
-- 请求地址: /v1/ListDevices
-- 请求方式: GET
-- 请求参数:
-
-| 参数  | 值             |
-|-------|----------------|
-| token | token          |
-
-- 返回格式: application/json
-- 返回码:
-
-| 返回码 | 类型           | 解释                                     | 格式             |
-|--------|----------------|------------------------------------------|------------------|
-| 200    | DeviceResponse | OK.                                      | application/json |
-| 400    | ErrorResponse  | An error occurred with your request.     | application/json |
-| 403    | ErrorResponse  | Request not authorized.                  | application/json |
-
-- 返回样例:
-
-```
-{
-    "data":[
-        {
-            "type":"devices",
-            "id":"xxxxxx",
-            "attributes":{
-                "udid":"xxxxxx"
-            },
-            "links":{
-                "self":"https://api.appstoreconnect.apple.com/v1/devices/xxxxxx"
-            }
-        }
-    ],
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/devices?fields%5Bdevices%5D=udid&limit=200"
-    },
-    "meta":{
-        "paging":{
-            "total":1,
-            "limit":200
-        }
-    }
-}
-```
-
-### 注册BundleID
-- 请求地址: /v1/RegisterNewBundleID
-- 请求方式: GET
-- 请求参数:
-
-| 参数  | 值               |
-|-------|------------------|
-| token | token            |
-| bid   | BundleID的标识符 |
-| name  | BundleID的名字   |
-
-- 返回格式: application/json
-- 返回码:
-
-| 返回码 | 类型             | 解释                                     | 格式             |
-|--------|------------------|------------------------------------------|------------------|
-| 201    | BundleIdResponse | Created.                                 | application/json |
-| 400    | ErrorResponse    | An error occurred with your request.     | application/json |
-| 403    | ErrorResponse    | Request not authorized.                  | application/json |
-| 409    | ErrorResponse    | The provided resource data is not valid. | application/json |
-
-- 返回样例:
-
-```
-{
-    "data":{
-        "type":"bundleIds",
-        "id":"xxxxxx",
-        "attributes":{
-            "name":"testbundleid",
-            "identifier":"xxx.xxx.xxx",
-            "platform":"UNIVERSAL",
-            "seedId":"xxxxxx"
-        },
-        "relationships":{
-            "bundleIdCapabilities":{
-                "meta":{
-                    "paging":{
-                        "total":0,
-                        "limit":xxx
-                    }
-                },
-                "data":[
-                    {
-                        "type":"bundleIdCapabilities",
-                        "id":"xxxxxx_GAME_CENTER"
-                    },
-                    {
-                        "type":"bundleIdCapabilities",
-                        "id":"xxxxxx_IN_APP_PURCHASE"
-                    }
-                ],
-                "links":{
-                    "self":"https://api.appstoreconnect.apple.com/v1/bundleIds/xxxxxx/relationships/bundleIdCapabilities",
-                    "related":"https://api.appstoreconnect.apple.com/v1/bundleIds/xxxxxx/bundleIdCapabilities"
-                }
-            },
-            "profiles":{
-                "meta":{
-                    "paging":{
-                        "total":0,
-                        "limit":xxx
-                    }
-                },
-                "data":[
-
-                ],
-                "links":{
-                    "self":"https://api.appstoreconnect.apple.com/v1/bundleIds/xxxxxx/relationships/profiles",
-                    "related":"https://api.appstoreconnect.apple.com/v1/bundleIds/xxxxxx/profiles"
-                }
-            }
-        },
-        "links":{
-            "self":"https://api.appstoreconnect.apple.com/v1/bundleIds/xxxxxx"
-        }
-    },
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/bundleIds"
-    }
+  "success": true,
+  "request_id": "84744b77baefc0c3",
+  "data": {}
 }
 ```
 
-### 列出BundleID
-- 请求地址: /v1/ListBundleIDs
-- 请求方式: GET
-- 请求参数:
+失败:
 
-| 参数  | 值               |
-|-------|------------------|
-| token | token            |
-
-- 返回格式: application/json
-- 返回码:
-
-| 返回码 | 类型             | 解释                                     | 格式             |
-|--------|------------------|------------------------------------------|------------------|
-| 200    | BundleIdResponse | OK.                                 | application/json |
-| 400    | ErrorResponse    | An error occurred with your request.     | application/json |
-| 403    | ErrorResponse    | Request not authorized.                  | application/json |
-
-- 返回样例:
-
-```
+```json
 {
-    "data":[
-        {
-            "type":"bundleIds",
-            "id":"ZHR8XPJ5J4",
-            "attributes":{
-                "identifier":"com.ty.OldOS"
-            },
-            "links":{
-                "self":"https://api.appstoreconnect.apple.com/v1/bundleIds/ZHR8XPJ5J4"
-            }
-        }
-    ],
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/bundleIds?fields%5BbundleIds%5D=identifier&limit=200"
-    },
-    "meta":{
-        "paging":{
-            "total":1,
-            "limit":200
-        }
-    }
+  "success": false,
+  "request_id": "c2d188ac8ef6f499",
+  "error": {
+    "code": "unauthorized",
+    "message": "Authorization header with Bearer token is required.",
+    "details": null
+  }
 }
 ```
 
-### 列出Apps
-- 请求地址: /v1/ListApps
-- 请求方式: GET
-- 请求参数:
+## OpenAPI
 
-| 参数  | 值               |
-|-------|------------------|
-| token | token            |
+- 规范文件: openapi.yaml
 
-- 返回格式: application/json
-- 返回码:
+## 测试
 
-| 返回码 | 类型             | 解释                                     | 格式             |
-|--------|------------------|------------------------------------------|------------------|
-| 200    | BundleIdResponse | OK.                                 | application/json |
-| 400    | ErrorResponse    | An error occurred with your request.     | application/json |
-| 403    | ErrorResponse    | Request not authorized.                  | application/json |
-
-- 返回样例:
-
-```
-{
-    "data":[
-        {
-            "type":"apps",
-            "id":"xxx",
-            "attributes":{
-                "name":"xxx",
-                "bundleId":"com.xx.xxx",
-                "sku":"com.xx.xxx",
-                "primaryLocale":"zh-Hans",
-                "isOrEverWasMadeForKids":false,
-                "availableInNewTerritories":false,
-                "contentRightsDeclaration":null
-            },
-            "relationships":{
-                "ciProduct":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/ciProduct",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/ciProduct"
-                    }
-                },
-                "betaTesters":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/betaTesters"
-                    }
-                },
-                "betaGroups":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/betaGroups",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/betaGroups"
-                    }
-                },
-                "appStoreVersions":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/appStoreVersions",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/appStoreVersions"
-                    }
-                },
-                "preReleaseVersions":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/preReleaseVersions",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/preReleaseVersions"
-                    }
-                },
-                "betaAppLocalizations":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/betaAppLocalizations",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/betaAppLocalizations"
-                    }
-                },
-                "builds":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/builds",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/builds"
-                    }
-                },
-                "betaLicenseAgreement":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/betaLicenseAgreement",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/betaLicenseAgreement"
-                    }
-                },
-                "betaAppReviewDetail":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/betaAppReviewDetail",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/betaAppReviewDetail"
-                    }
-                },
-                "appInfos":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/appInfos",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/appInfos"
-                    }
-                },
-                "endUserLicenseAgreement":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/endUserLicenseAgreement",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/endUserLicenseAgreement"
-                    }
-                },
-                "preOrder":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/preOrder",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/preOrder"
-                    }
-                },
-                "prices":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/prices",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/prices"
-                    }
-                },
-                "availableTerritories":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/availableTerritories",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/availableTerritories"
-                    }
-                },
-                "inAppPurchases":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/inAppPurchases",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/inAppPurchases"
-                    }
-                },
-                "gameCenterEnabledVersions":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/gameCenterEnabledVersions",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/gameCenterEnabledVersions"
-                    }
-                },
-                "perfPowerMetrics":{
-                    "links":{
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/perfPowerMetrics"
-                    }
-                }
-            },
-            "links":{
-                "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx"
-            }
-        }
-    ],
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/apps"
-    },
-    "meta":{
-        "paging":{
-            "total":1,
-            "limit":50
-        }
-    }
-}
+```bash
+composer install
+vendor/bin/phpunit
 ```
 
-### 列出证书
-- 请求地址: /v1/ListCertifications
-- 请求方式: GET
-- 请求参数:
+如果系统没有全局 composer，可使用项目本地 composer:
 
-| 参数  | 值             |
-|-------|----------------|
-| token | token          |
-
-- 返回格式: application/json
-- 返回码:
-
-| 返回码 | 类型                 | 解释                                     | 格式             |
-|--------|----------------------|------------------------------------------|------------------|
-| 200    | CertificatesResponse | OK.                                      | application/json |
-| 400    | ErrorResponse        | An error occurred with your request.     | application/json |
-| 403    | ErrorResponse        | Request not authorized.                  | application/json |
-
-- 返回样例:
-
+```bash
+php ./composer install
+php ./vendor/bin/phpunit
 ```
-{
-    "data":[
-        {
-            "type":"certificates",
-            "id":"xxx",
-            "attributes":{
-                "serialNumber":"xxx",
-                "certificateContent":"xxx",
-                "displayName":"xxx",
-                "name":"Apple Development: xxx",
-                "csrContent":null,
-                "platform":null,
-                "expirationDate":"xxxx-xx-xxTxx:xx:xx.xxx+xxxx",
-                "certificateType":"DEVELOPMENT"
-            },
-            "relationships":{
-                "passTypeId":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/certificates/xxx/relationships/passTypeId",
-                        "related":"https://api.appstoreconnect.apple.com/v1/certificates/xxx/passTypeId"
-                    }
-                }
-            },
-            "links":{
-                "self":"https://api.appstoreconnect.apple.com/v1/certificates/xxx"
-            }
-        }
-    ],
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/certificates?limit=200"
-    },
-    "meta":{
-        "paging":{
-            "total":1,
-            "limit":200
-        }
-    }
-}
-```
+
+## 迁移映射
+
+| 旧接口 | 新接口 |
+| --- | --- |
+| GET /v1/GetToken | POST /v1/token |
+| GET /v1/ListApps | GET /v1/apps |
+| GET /v1/ListBundleIDs | GET /v1/bundleIds |
+| GET /v1/ListCertifications | GET /v1/certificates |
+| GET /v1/ListDevices | GET /v1/devices |
+| GET /v1/RegisterNewDevice | POST /v1/devices |
+| GET /v1/RegisterNewBundleID | POST /v1/bundleIds |
+
+鉴权迁移:
+
+- 旧版: query 参数 token
+- 新版: Authorization Bearer token

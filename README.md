@@ -1,476 +1,172 @@
-## App Store Connect API
+# App Store Connect API Gateway
 
-### Upload AuthKey
+A lightweight PHP REST gateway for Apple App Store Connect API.
 
-- Upload P8 file into `/AuthKey`  **(NOT TO EDIT THE FILE NAME)**
+## Current Status
 
-### GetToken
+- API style: REST only
+- Auth mode: Authorization Bearer only for protected routes
 
-- URL: /v1/GetToken
-- Method: GET
-- Parameter:
+## Implemented Modules
 
-| Parameter | Description |
-| --------- | ----------- |
-| iss       | Issuer ID   |
-| kid       | Key ID      |
+- Token: create JWT for App Store Connect
+- Apps: list, details, app store versions
+- Devices: list, create, details, update, delete
+- Bundle IDs: list, create, details, update, delete
+- Certificates: list, details, delete
+- Profiles: list, create, details, delete
+- TestFlight: beta groups, beta testers, builds
+- App Store Version Localizations: list, create, details, update
 
-- Return Format: application/json
-- Return Code:
+## Project Structure
 
-| Return Code | Type          | Description                              | *Type            |
-| ----------- | ------------- | ---------------------------------------- | ---------------- |
-| 201         | TokenResponse | Created.                                 | application/json |
-| 409         | ErrorResponse | The provided resource data is not valid. | application/json |
+```text
+app/
+  Controllers/
+  Http/
+  Services/
+  Support/
+v1/
+  index.php
+  routes.php
+openapi.yaml
+```
 
-- Return Example:
+## Requirements
+
+- PHP 8.1+
+- PHP extensions: curl, openssl, json
+- Composer (recommended, for tests)
+
+## Quick Start
+
+1. Copy env template:
+
+```bash
+cp .env.example .env
+```
+
+2. Put your key file in AuthKey:
+
+```text
+AuthKey/AuthKey_<kid>.p8
+```
+
+3. Start local server:
+
+```bash
+php -S 127.0.0.1:8080 v1/index.php
+```
+
+4. Create JWT token:
+
+```bash
+curl -X POST http://127.0.0.1:8080/v1/token \
+  -H 'Content-Type: application/json' \
+  -d '{"iss":"<issuer-id>","kid":"<key-id>"}'
+```
+
+5. Call protected endpoint:
+
+```bash
+curl http://127.0.0.1:8080/v1/apps \
+  -H 'Authorization: Bearer <jwt-token>'
+```
+
+## API Endpoints
+
+### Public
+
+- GET /v1/health
+- POST /v1/token
+
+### Protected
+
+- GET /v1/apps
+- GET /v1/apps/{id}
+- GET /v1/apps/{id}/appStoreVersions
+- GET /v1/devices
+- POST /v1/devices
+- GET /v1/devices/{id}
+- PATCH /v1/devices/{id}
+- DELETE /v1/devices/{id}
+- GET /v1/bundleIds
+- POST /v1/bundleIds
+- GET /v1/bundleIds/{id}
+- PATCH /v1/bundleIds/{id}
+- DELETE /v1/bundleIds/{id}
+- GET /v1/certificates
+- GET /v1/certificates/{id}
+- DELETE /v1/certificates/{id}
+- GET /v1/profiles
+- POST /v1/profiles
+- GET /v1/profiles/{id}
+- DELETE /v1/profiles/{id}
+- GET /v1/betaGroups
+- GET /v1/betaTesters
+- GET /v1/builds
+- GET /v1/appStoreVersions/{id}/appStoreVersionLocalizations
+- POST /v1/appStoreVersionLocalizations
+- GET /v1/appStoreVersionLocalizations/{id}
+- PATCH /v1/appStoreVersionLocalizations/{id}
+
+## Unified Response Format
+
+Success:
 
 ```json
 {
-    "status":"200",
-    "expiration":"xxx",
-    "token":"xxx.xxx.xxx"
+  "success": true,
+  "request_id": "84744b77baefc0c3",
+  "data": {}
 }
 ```
 
-### RegisterNewDevice
-
-- URL: /v1/RegisterNewDevice
-- Method: GET
-- Parameter:
-
-| Parameter | Description |
-| --------- | ----------- |
-| token     | token       |
-| udid      | UDID        |
-
-- Return Format: application/json
-- Return Code:
-
-| Return Code | Type           | Description                              | *Type            |
-| ----------- | -------------- | ---------------------------------------- | ---------------- |
-| 201         | DeviceResponse | Created.                                 | application/json |
-| 400         | ErrorResponse  | An error occurred with your request.     | application/json |
-| 403         | ErrorResponse  | Request not authorized.                  | application/json |
-| 409         | ErrorResponse  | The provided resource data is not valid. | application/json |
-
-- Return Example:
+Error:
 
 ```json
 {
-    "data":{
-        "type":"devices",
-        "id":"xxx",
-        "attributes":{
-            "addedDate":"xxxx-xx-xxTxx:xx:xx.xxxxxxx",
-            "name":"xxx",
-            "deviceClass":"IPHONE",
-            "model":"iPhone X",
-            "udid":"xxx",
-            "platform":"IOS",
-            "status":"ENABLED"
-        },
-        "links":{
-            "self":"https://api.appstoreconnect.apple.com/v1/devices/xxx"
-        }
-    },
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/devices"
-    }
+  "success": false,
+  "request_id": "c2d188ac8ef6f499",
+  "error": {
+    "code": "unauthorized",
+    "message": "Authorization header with Bearer token is required.",
+    "details": null
+  }
 }
 ```
 
-### ListDevices
+## OpenAPI
 
-- URL: /v1/ListDevices
-- Method: GET
-- Parameter:
+- Specification file: openapi.yaml
 
-| Parameter | Description |
-| --------- | ----------- |
-| token     | token       |
+## Testing
 
-- Return Format: application/json
-- Return Code:
-
-| Return Code | Type           | Description                          | *Type            |
-| ----------- | -------------- | ------------------------------------ | ---------------- |
-| 200         | DeviceResponse | OK.                                  | application/json |
-| 400         | ErrorResponse  | An error occurred with your request. | application/json |
-| 403         | ErrorResponse  | Request not authorized.              | application/json |
-
-- Return Example:
-
-```json
-{
-    "data":[
-        {
-            "type":"devices",
-            "id":"xxxxxx",
-            "attributes":{
-                "udid":"xxxxxx"
-            },
-            "links":{
-                "self":"https://api.appstoreconnect.apple.com/v1/devices/xxxxxx"
-            }
-        }
-    ],
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/devices?fields%5Bdevices%5D=udid&limit=200"
-    },
-    "meta":{
-        "paging":{
-            "total":1,
-            "limit":200
-        }
-    }
-}
+```bash
+composer install
+vendor/bin/phpunit
 ```
 
-### RegisterNewBundleID
+If composer is not available globally, use local composer binary:
 
-- URL: /v1/RegisterNewBundleID
-- Method: GET
-- Parameter:
-
-| Parameter | Description      |
-| --------- | ---------------- |
-| token     | token            |
-| bid       | BundleID         |
-| name      | Name of BundleID |
-
-- Return Format: application/json
-- Return Code:
-
-| Return Code | Type             | Description                              | *Type            |
-| ----------- | ---------------- | ---------------------------------------- | ---------------- |
-| 201         | BundleIdResponse | Created.                                 | application/json |
-| 400         | ErrorResponse    | An error occurred with your request.     | application/json |
-| 403         | ErrorResponse    | Request not authorized.                  | application/json |
-| 409         | ErrorResponse    | The provided resource data is not valid. | application/json |
-
-- Return Example:
-
-```json
-{
-    "data":{
-        "type":"bundleIds",
-        "id":"xxxxxx",
-        "attributes":{
-            "name":"testbundleid",
-            "identifier":"xxx.xxx.xxx",
-            "platform":"UNIVERSAL",
-            "seedId":"xxxxxx"
-        },
-        "relationships":{
-            "bundleIdCapabilities":{
-                "meta":{
-                    "paging":{
-                        "total":0,
-                        "limit":1
-                    }
-                },
-                "data":[
-                    {
-                        "type":"bundleIdCapabilities",
-                        "id":"xxxxxx_GAME_CENTER"
-                    },
-                    {
-                        "type":"bundleIdCapabilities",
-                        "id":"xxxxxx_IN_APP_PURCHASE"
-                    }
-                ],
-                "links":{
-                    "self":"https://api.appstoreconnect.apple.com/v1/bundleIds/xxxxxx/relationships/bundleIdCapabilities",
-                    "related":"https://api.appstoreconnect.apple.com/v1/bundleIds/xxxxxx/bundleIdCapabilities"
-                }
-            },
-            "profiles":{
-                "meta":{
-                    "paging":{
-                        "total":0,
-                        "limit":1
-                    }
-                },
-                "data":[
-
-                ],
-                "links":{
-                    "self":"https://api.appstoreconnect.apple.com/v1/bundleIds/xxxxxx/relationships/profiles",
-                    "related":"https://api.appstoreconnect.apple.com/v1/bundleIds/xxxxxx/profiles"
-                }
-            }
-        },
-        "links":{
-            "self":"https://api.appstoreconnect.apple.com/v1/bundleIds/xxxxxx"
-        }
-    },
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/bundleIds"
-    }
-}
+```bash
+php ./composer install
+php ./vendor/bin/phpunit
 ```
 
-### ListBundleIDs
+## Migration Mapping
 
-- URL: /v1/ListBundleIDs
-- Method: GET
-- Parameter:
+| Legacy endpoint | New endpoint |
+| --- | --- |
+| GET /v1/GetToken | POST /v1/token |
+| GET /v1/ListApps | GET /v1/apps |
+| GET /v1/ListBundleIDs | GET /v1/bundleIds |
+| GET /v1/ListCertifications | GET /v1/certificates |
+| GET /v1/ListDevices | GET /v1/devices |
+| GET /v1/RegisterNewDevice | POST /v1/devices |
+| GET /v1/RegisterNewBundleID | POST /v1/bundleIds |
 
-| Parameter | Description |
-| --------- | ----------- |
-| token     | token       |
+Auth migration:
 
-- Return Format: application/json
-- Return Code:
-
-| Return Code | Type             | Description                          | *Type            |
-| ----------- | ---------------- | ------------------------------------ | ---------------- |
-| 200         | BundleIdResponse | OK.                                  | application/json |
-| 400         | ErrorResponse    | An error occurred with your request. | application/json |
-| 403         | ErrorResponse    | Request not authorized.              | application/json |
-
-- Return Example:
-
-```json
-{
-    "data":[
-        {
-            "type":"bundleIds",
-            "id":"xxx",
-            "attributes":{
-                "identifier":"xxx.xxx.xxx"
-            },
-            "links":{
-                "self":"https://api.appstoreconnect.apple.com/v1/bundleIds/xxx"
-            }
-        }
-    ],
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/bundleIds?fields%5BbundleIds%5D=identifier&limit=200"
-    },
-    "meta":{
-        "paging":{
-            "total":1,
-            "limit":200
-        }
-    }
-}
-```
-
-### ListApps
-
-- URL: /v1/ListApps
-- Method: GET
-- Parameter:
-
-| Parameter | Description |
-| --------- | ----------- |
-| token     | token       |
-
-- Return Format: application/json
-- Return Code:
-
-| Return Code | Type             | Description                          | *Type            |
-| ----------- | ---------------- | ------------------------------------ | ---------------- |
-| 200         | BundleIdResponse | OK.                                  | application/json |
-| 400         | ErrorResponse    | An error occurred with your request. | application/json |
-| 403         | ErrorResponse    | Request not authorized.              | application/json |
-
-- Return Example:
-
-```json
-{
-    "data":[
-        {
-            "type":"apps",
-            "id":"xxx",
-            "attributes":{
-                "name":"xxx",
-                "bundleId":"com.xx.xxx",
-                "sku":"com.xx.xxx",
-                "primaryLocale":"xxx",
-                "isOrEverWasMadeForKids":false,
-                "availableInNewTerritories":false,
-                "contentRightsDeclaration":null
-            },
-            "relationships":{
-                "ciProduct":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/ciProduct",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/ciProduct"
-                    }
-                },
-                "betaTesters":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/betaTesters"
-                    }
-                },
-                "betaGroups":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/betaGroups",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/betaGroups"
-                    }
-                },
-                "appStoreVersions":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/appStoreVersions",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/appStoreVersions"
-                    }
-                },
-                "preReleaseVersions":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/preReleaseVersions",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/preReleaseVersions"
-                    }
-                },
-                "betaAppLocalizations":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/betaAppLocalizations",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/betaAppLocalizations"
-                    }
-                },
-                "builds":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/builds",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/builds"
-                    }
-                },
-                "betaLicenseAgreement":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/betaLicenseAgreement",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/betaLicenseAgreement"
-                    }
-                },
-                "betaAppReviewDetail":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/betaAppReviewDetail",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/betaAppReviewDetail"
-                    }
-                },
-                "appInfos":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/appInfos",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/appInfos"
-                    }
-                },
-                "endUserLicenseAgreement":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/endUserLicenseAgreement",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/endUserLicenseAgreement"
-                    }
-                },
-                "preOrder":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/preOrder",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/preOrder"
-                    }
-                },
-                "prices":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/prices",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/prices"
-                    }
-                },
-                "availableTerritories":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/availableTerritories",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/availableTerritories"
-                    }
-                },
-                "inAppPurchases":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/inAppPurchases",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/inAppPurchases"
-                    }
-                },
-                "gameCenterEnabledVersions":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx/relationships/gameCenterEnabledVersions",
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/gameCenterEnabledVersions"
-                    }
-                },
-                "perfPowerMetrics":{
-                    "links":{
-                        "related":"https://api.appstoreconnect.apple.com/v1/apps/xxx/perfPowerMetrics"
-                    }
-                }
-            },
-            "links":{
-                "self":"https://api.appstoreconnect.apple.com/v1/apps/xxx"
-            }
-        }
-    ],
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/apps"
-    },
-    "meta":{
-        "paging":{
-            "total":1,
-            "limit":50
-        }
-    }
-}
-```
-
-### ListCertifications
-
-- URL: /v1/ListCertifications
-- Method: GET
-- Parameter:
-
-| Parameter | Description |
-| --------- | ----------- |
-| token     | token       |
-
-- Return Format: application/json
-- Return Code:
-
-| Return Code | Type                 | Description                          | *Type            |
-| ----------- | -------------------- | ------------------------------------ | ---------------- |
-| 200         | CertificatesResponse | OK.                                  | application/json |
-| 400         | ErrorResponse        | An error occurred with your request. | application/json |
-| 403         | ErrorResponse        | Request not authorized.              | application/json |
-
-- Return Example:
-
-```json
-{
-    "data":[
-        {
-            "type":"certificates",
-            "id":"xxx",
-            "attributes":{
-                "serialNumber":"xxx",
-                "certificateContent":"xxx",
-                "displayName":"xxx",
-                "name":"Apple Development: xxx",
-                "csrContent":null,
-                "platform":null,
-                "expirationDate":"xxxx-xx-xxTxx:xx:xx.xxx+xxxx",
-                "certificateType":"DEVELOPMENT"
-            },
-            "relationships":{
-                "passTypeId":{
-                    "links":{
-                        "self":"https://api.appstoreconnect.apple.com/v1/certificates/xxx/relationships/passTypeId",
-                        "related":"https://api.appstoreconnect.apple.com/v1/certificates/xxx/passTypeId"
-                    }
-                }
-            },
-            "links":{
-                "self":"https://api.appstoreconnect.apple.com/v1/certificates/xxx"
-            }
-        }
-    ],
-    "links":{
-        "self":"https://api.appstoreconnect.apple.com/v1/certificates?limit=200"
-    },
-    "meta":{
-        "paging":{
-            "total":1,
-            "limit":200
-        }
-    }
-}
-```
+- Legacy: query token parameter
+- New: Authorization header with Bearer token
