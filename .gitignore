@@ -1,2 +1,7 @@
 
 .DS_Store
+vendor/
+composer
+composer-setup.php
+.phpunit.cache/
+.env
