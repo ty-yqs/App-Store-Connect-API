@@ -2,6 +2,14 @@
 
 A lightweight PHP REST gateway for Apple App Store Connect API.
 
+<a href="https://www.star-history.com/?repos=ty-yqs%2FApp-Store-Connect-API&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=ty-yqs/App-Store-Connect-API&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=ty-yqs/App-Store-Connect-API&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/image?repos=ty-yqs/App-Store-Connect-API&type=date&legend=top-left" />
+ </picture>
+</a>
+
 ## Current Status
 
 - API style: REST only
