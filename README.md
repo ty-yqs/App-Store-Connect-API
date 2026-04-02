@@ -38,6 +38,21 @@ openapi.yaml
 - PHP extensions: curl, openssl, json
 - Composer (recommended, for tests)
 
+## HTTP Client Tuning
+
+Apple API client supports split timeouts and idempotent retries.
+
+- `ASC_HTTP_CONNECT_TIMEOUT`: connect timeout in seconds
+- `ASC_HTTP_READ_TIMEOUT`: read timeout in seconds
+- `ASC_HTTP_MAX_RETRIES`: max retry count for idempotent methods only (GET/HEAD/PUT/DELETE/OPTIONS)
+- `ASC_HTTP_RETRY_DELAY_MS`: base delay in milliseconds for exponential backoff
+- `ASC_HTTP_RETRYABLE_CODES`: comma-separated retryable HTTP status codes
+
+Compatibility fallback:
+
+- If split timeout variables are not set, `ASC_HTTP_TIMEOUT` is still used as fallback.
+- Non-idempotent methods (`POST`, `PATCH`) are not retried.
+
 ## Quick Start
 
 1. Copy env template:

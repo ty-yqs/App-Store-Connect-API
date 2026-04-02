@@ -38,6 +38,21 @@ openapi.yaml
 - PHP 扩展: curl、openssl、json
 - Composer (推荐，用于测试)
 
+## HTTP 客户端调优
+
+Apple API 客户端已支持超时分级与幂等重试。
+
+- `ASC_HTTP_CONNECT_TIMEOUT`: 连接超时（秒）
+- `ASC_HTTP_READ_TIMEOUT`: 读取超时（秒）
+- `ASC_HTTP_MAX_RETRIES`: 最大重试次数，仅对幂等方法生效（GET/HEAD/PUT/DELETE/OPTIONS）
+- `ASC_HTTP_RETRY_DELAY_MS`: 指数退避基础间隔（毫秒）
+- `ASC_HTTP_RETRYABLE_CODES`: 可重试 HTTP 状态码列表（逗号分隔）
+
+兼容回退说明:
+
+- 若未设置分级超时变量，仍会回退使用 `ASC_HTTP_TIMEOUT`。
+- 非幂等方法（`POST`、`PATCH`）不会自动重试。
+
 ## 快速开始
 
 1. 复制环境变量模板:
