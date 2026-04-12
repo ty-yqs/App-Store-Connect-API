@@ -61,6 +61,29 @@ Compatibility fallback:
 - If split timeout variables are not set, `ASC_HTTP_TIMEOUT` is still used as fallback.
 - Non-idempotent methods (`POST`, `PATCH`) are not retried.
 
+## Request Logging
+
+Request logging is enabled by default and writes JSON lines for:
+
+- inbound request
+- outbound response
+- unhandled error
+- upstream Apple API attempt/result
+
+Configuration:
+
+- `LOG_ENABLED`: enable/disable all request logs
+- `LOG_LEVEL`: minimum level (`debug`, `info`, `warn`, `error`)
+- `LOG_HTTP_ENABLED`: enable/disable upstream HTTP attempt/result logs
+- `LOG_STDERR_ENABLED`: write logs to stderr
+- `LOG_FILEPATH`: file destination (auto-creates parent directory)
+
+Security defaults:
+
+- Sensitive fields are masked by default (`authorization`, `token`, `secret`, `password`, `key`, etc.)
+- Query/body/header values are sanitized before writing logs
+- Long strings are truncated to keep log size predictable
+
 ## Quick Start
 
 1. Copy env template:

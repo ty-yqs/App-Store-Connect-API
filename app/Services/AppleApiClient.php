@@ -74,7 +74,19 @@ final class AppleApiClient
 
         while ($attempts < $maxAttempts) {
             $attempts++;
+
+            RequestLogger::logUpstreamAttempt($method, $url, $attempts, $maxAttempts);
+            $attemptStartedAt = microtime(true);
             $attemptResult = $this->executeRequestAttempt($url, $method, $bearerToken, $encodedPayload);
+            RequestLogger::logUpstreamResult(
+                $method,
+                $url,
+                $attempts,
+                $maxAttempts,
+                $attemptResult['status'],
+                $attemptResult['network_error'],
+                RequestLogger::elapsedMilliseconds($attemptStartedAt)
+            );
 
             if ($attemptResult['network_error'] === null && $attemptResult['status'] < 400) {
                 return [

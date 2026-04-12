@@ -72,6 +72,11 @@ final class Request
         return $this->query;
     }
 
+    public function headersAll(): array
+    {
+        return $this->headers;
+    }
+
     public function bodyAll(): array
     {
         return $this->body;

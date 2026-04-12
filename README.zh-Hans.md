@@ -61,6 +61,29 @@ Apple API 客户端已支持超时分级与幂等重试。
 - 若未设置分级超时变量，仍会回退使用 `ASC_HTTP_TIMEOUT`。
 - 非幂等方法（`POST`、`PATCH`）不会自动重试。
 
+## 请求日志
+
+请求日志默认开启，按 JSON Lines 记录以下事件:
+
+- 入站请求（inbound）
+- 出站响应（outbound）
+- 未捕获异常（error）
+- 上游 Apple API 尝试与结果（upstream attempt/result）
+
+配置项:
+
+- `LOG_ENABLED`: 开启或关闭全部请求日志
+- `LOG_LEVEL`: 最低输出级别（`debug`、`info`、`warn`、`error`）
+- `LOG_HTTP_ENABLED`: 开启或关闭上游 HTTP 尝试/结果日志
+- `LOG_STDERR_ENABLED`: 是否输出到 stderr
+- `LOG_FILEPATH`: 文件输出路径（会自动创建父目录）
+
+安全默认策略:
+
+- 默认会对敏感字段脱敏（如 `authorization`、`token`、`secret`、`password`、`key` 等）
+- query/body/header 会先清洗再写入日志
+- 超长字符串会被截断，避免日志体积失控
+
 ## 快速开始
 
 1. 复制环境变量模板:
