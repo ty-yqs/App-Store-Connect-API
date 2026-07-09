@@ -4,9 +4,9 @@ A lightweight PHP REST gateway for Apple App Store Connect API.
 
 <a href="https://www.star-history.com/?repos=ty-yqs%2FApp-Store-Connect-API&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=ty-yqs/App-Store-Connect-API&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=ty-yqs/App-Store-Connect-API&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/image?repos=ty-yqs/App-Store-Connect-API&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=ty-yqs/App-Store-Connect-API&type=date&theme=dark&legend=top-left&sealed_token=b0NroHam4xfPbRQCoSOaINSPxTZHVgn9aCWiGqZVSCadkBTQjbYtrVyv-GifJSXKRHt84U6_K6eSb_YyIYZ27sFZyd5qIj7vqf5fury_s6931XS6MrY7aQ" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=ty-yqs/App-Store-Connect-API&type=date&legend=top-left&sealed_token=b0NroHam4xfPbRQCoSOaINSPxTZHVgn9aCWiGqZVSCadkBTQjbYtrVyv-GifJSXKRHt84U6_K6eSb_YyIYZ27sFZyd5qIj7vqf5fury_s6931XS6MrY7aQ" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=ty-yqs/App-Store-Connect-API&type=date&legend=top-left&sealed_token=b0NroHam4xfPbRQCoSOaINSPxTZHVgn9aCWiGqZVSCadkBTQjbYtrVyv-GifJSXKRHt84U6_K6eSb_YyIYZ27sFZyd5qIj7vqf5fury_s6931XS6MrY7aQ" />
  </picture>
 </a>
 
